@@ -1,0 +1,1096 @@
+package com.myspace.ecommerce;
+
+
+
+
+import java.time.*;
+import java.time.format.*;
+import java.lang.Number;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
+
+
+rule "all true"
+	dialect "mvel"
+	salience 149
+	ruleflow-group "gogo"
+	no-loop true
+	when
+		v : VendorWorkingDays( eval((product + service)< 12), one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2 )
+        
+	
+	then
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( true );
+		fact0.setFlagTodayOne( true );
+		fact0.setFlagTodayTwo( true );
+		fact0.setFlagTodayThree( true );
+		fact0.setFlagTodayFour( true );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert(fact0);
+		$km = Math.cos(Math.toRadians(90-$lat1))*Math.cos(Math.toRadians(90-$lat2))+Math.sin(Math.toRadians(90-$lat1))*Math.sin(Math.toRadians(90-$lat2))*Math.cos(Math.toRadians($lon1-$lon2));
+		$km=Math.acos($km)*6371;
+				modify(v){
+		    setProduct( p+s ),
+		    setOne(1),
+		    setKm($km)
+		    
+		}
+		
+		
+		System.out.println("all true "+$lat2);
+end
+
+
+
+
+rule "today false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 12)&& eval((product + service)< 48),one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( true );
+		fact0.setFlagTodayTwo( true );
+		fact0.setFlagTodayThree( true );
+		fact0.setFlagTodayFour( true );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		$km = Math.cos(Math.toRadians(90-$lat1))*Math.cos(Math.toRadians(90-$lat2))+Math.sin(Math.toRadians(90-$lat1))*Math.sin(Math.toRadians(90-$lat2))*Math.cos(Math.toRadians($lon1-$lon2));
+		$km=Math.acos($km)*6371;
+		modify( v ) {
+				setProduct( (p+s)-24 ),
+				setOne(1),
+				setKm($km)
+				
+		}
+		System.out.println("today false::   "+fact0.isFlagTodayOne());
+end
+
+
+rule "todayOne false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	lock-on-active true
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 48)&&eval((product + service)< 72),one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( true );
+		fact0.setFlagTodayThree( true );
+		fact0.setFlagTodayFour( true );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		$km = Math.cos(Math.toRadians(90-$lat1))*Math.cos(Math.toRadians(90-$lat2))+Math.sin(Math.toRadians(90-$lat1))*Math.sin(Math.toRadians(90-$lat2))*Math.cos(Math.toRadians($lon1-$lon2));
+		$km=Math.acos($km)*6371;
+		modify( v ) {
+				setProduct( (p+s)-48 ), 
+				setOne(1),
+				setKm($km)
+				
+		}
+		System.out.println("todayOne false::   ");
+end
+
+rule "todayTwo false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 72)&& eval((product + service)< 96) ,one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( false );
+		fact0.setFlagTodayThree( true );
+		fact0.setFlagTodayFour( true );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		modify( v ) {
+				setProduct( (p+s)-72 ),
+				setOne(1),
+				setKm($km)
+				
+		}
+		System.out.println("tod   two");
+end
+
+rule "todayThree false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 96)&& eval((product + service)< 120),one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( false );
+		fact0.setFlagTodayThree( false );
+		fact0.setFlagTodayFour( true );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		modify( v ) {
+				setProduct( (p+s)-96 ), 
+				setOne(1),
+				setKm($km)
+				
+		}
+		System.out.println("todayThree false::   ");
+end
+
+rule "todayFour false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 120)&& eval((product + service)< 144),one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+     Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( false );
+		fact0.setFlagTodayThree( false );
+		fact0.setFlagTodayFour( false );
+		fact0.setFlagTodayFive( true );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		modify( v ) {
+				setProduct( (p+s)-120 ), 
+				setOne(1),
+				setKm($km)
+				
+		}
+		System.out.println("todayFour false::   ");	
+end
+
+rule "todayFive false or ro"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 144)&& eval((product + service)< 168),one== 0,p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+        Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( false );
+		fact0.setFlagTodayThree( false );
+		fact0.setFlagTodayFour( false );
+		fact0.setFlagTodayFive( false );
+		fact0.setFlagTodaySix( true );
+		insert( fact0 );
+		modify( v ) {
+				setProduct( (p+s)-144 ), 
+				setOne(1),
+				setKm($km)
+				
+		}
+	    System.out.println("todayFive false::   ");
+
+end
+
+
+rule "todaySix false"
+	dialect "mvel"
+	salience 148
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+		v : VendorWorkingDays(eval((product + service)>= 168)&&eval((product + service)< 1000),p:product,s:service,$km:km,$lat1:lat1,$lat2:lat2,$lon1:long1,$lon2:long2)
+
+	
+	then
+	
+        Flagging fact0 = new Flagging();
+		fact0.setFlagToday( false );
+		fact0.setFlagTodayOne( false );
+		fact0.setFlagTodayTwo( false );
+		fact0.setFlagTodayThree( false );
+		fact0.setFlagTodayFour( false );
+		fact0.setFlagTodayFive( false );
+		fact0.setFlagTodaySix( false );
+		insert( fact0 );
+		
+		System.out.println("todaySix false::::  "+fact0.isFlagTodaySix());
+end
+
+rule "momo"
+	dialect "mvel"
+	salience 130
+	ruleflow-group "gogo"
+	no-loop true
+	when
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().getDayOfWeek().toString()) )&& eval( LocalTime.now().plusHours(product).isBefore(LocalTime.parse("19:59:00")) )&& eval( openTime.isBefore(LocalTime.parse("14:59:00")) )&& eval( LocalTime.now().plusHours(product).isBefore(LocalTime.parse("14:59:00")) )&& eval( closeTime.isAfter(LocalTime.parse("14:59:00")) )&& eval(LocalTime.now().plusHours(product).isBefore(LocalTime.parse("19:59:00"))))
+		Flagging(flagToday )
+		com.myspace.ecommerce.VendorWorkingDays(one==1 )
+	then
+		  modify(v){
+				setTodayM( "Available" ),
+				setTodayE( "Available" ), 
+				setTodayFlag( true ),
+				setOne(2)
+				
+		  }
+		//System.out.println("Both available for today : momo "+v.getProduct()+" "+v.getService());
+		
+end
+
+
+
+rule "momo1"
+	dialect "mvel"
+	ruleflow-group "gogo"
+	salience 129
+	
+	
+	when
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().getDayOfWeek().toString()) )&& eval( LocalTime.now().plusHours(product).isBefore(closeTime) )&& eval( LocalTime.now().plusHours(product).isBefore(LocalTime.parse("14:59:00")) )&& eval( closeTime.isBefore(LocalTime.parse("14:59:00")) ))
+		Flagging( flagToday == true )
+		VendorWorkingDays(one == 1 )
+	then
+		modify( v ) {
+				setTodayM( "Available" ), 
+				setTodayE( "NA" ), 
+				setTodayFlag( true ),
+				setOne(2)
+		}
+		System.out.println("today morning: momo1");
+end
+
+
+rule "today evening"
+	dialect "mvel"
+	ruleflow-group "gogo"
+	salience 129
+	no-loop true
+	
+	when
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().getDayOfWeek().toString()) )&& eval( LocalTime.now().plusHours(product).isBefore(closeTime) )&& eval( LocalTime.now().plusHours(product).isAfter(LocalTime.parse("14:59:00")) )&& eval( closeTime.isAfter(LocalTime.parse("14:59:00")) ))
+		Flagging( flagToday == true )
+		com.myspace.ecommerce.VendorWorkingDays(one==1 )
+		com.myspace.ecommerce.VendorWorkingDays(eval( LocalTime.now().plusHours(product).isBefore(LocalTime.parse("19:59:00")) ) )
+	then
+		modify(v){
+				setTodayM( "NA" ),
+				setTodayE( "Available" ),
+				setTodayFlag( true ),
+				setOne(2)
+		}
+		//System.out.println("today evening: ");
+end
+
+
+
+
+
+rule "today true and close time is before 15pm"
+	dialect "mvel"
+	salience 120
+	ruleflow-group "gogo"
+	
+	
+	when
+	    Flagging( flagTodayOne == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(1).getDayOfWeek().toString()) )&& one == 2 && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) ))
+	then
+	        modify( v ) {
+				setTodayOneE( "NA" ), 
+				setTodayOneM( "Available" ), 
+				setTodayOneFlag( true ),
+				setOne(3)
+	        }		
+		System.out.println("today true and close time is before 15pm");
+end
+
+
+
+rule "today false and close time is before 15pm"
+	dialect "mvel"
+	salience 119
+	ruleflow-group "gogo"
+	
+	
+	when
+	    Flagging( flagTodayOne == true )
+	    com.myspace.ecommerce.VendorWorkingDays( one == 1)
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(1).getDayOfWeek().toString()) )&& todayFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	        modify(v){
+				setTodayOneE( "NA" ),
+				setTodayOneM( "Available" ), 
+				setTodayOneFlag( true ),
+				setOne(3)
+	        }		
+		System.out.println("today false and close time is before 15pm");
+end
+
+
+rule "today is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 118
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	    Flagging( flagTodayOne == true )
+	    com.myspace.ecommerce.VendorWorkingDays( one == 1)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(1).getDayOfWeek().toString()) )&& todayFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodayOneE( "Available" ), 
+				setTodayOneM( "NA" ), 
+				setTodayOneFlag( true ),
+				setOne(3)
+		}
+end
+
+
+rule "today is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 118
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayOne == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one == 1 )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(1).getDayOfWeek().toString()) )&& todayFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodayOneE( "Available" ), 
+				setTodayOneM( "Available" ), 
+				setTodayOneFlag( true ),
+				setOne(3)
+		}
+end
+
+
+rule "toayone is true and open beore 15 and close after 15 "
+	dialect "mvel"
+	salience 117
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayTwo == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 3 )
+	then
+		    modify(v){
+		        setTodayTwoE( "Available" ); 
+				setTodayTwoM( "Available" ); 
+				setTodayTwoFlag( true );
+				setOne(4);
+		        
+		    }
+				
+                		
+		System.out.println("today one true and all day");
+end
+
+rule "toayone is true and open after 15 and close after 15 "
+	dialect "mvel"
+	salience 117
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayTwo == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one == 3 )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& todayOneFlag == true )
+	then
+		modify( v ) {
+				setTodayTwoM( "NA" ), 
+				setTodayTwoE( "Available" ), 
+				setTodayTwoFlag( true ),
+				setOne(4);
+		}
+end
+
+rule "toayone is true and open before 15 and close before 15 "
+	dialect "mvel"
+	salience 117
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayTwo == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 3 )
+	then
+		modify( v ) {
+				setTodayTwoM( "Available" ), 
+				setTodayTwoE( "NA" ), 
+				setTodayTwoFlag( true ),
+				setOne(4)
+		}
+end
+
+
+rule "today one is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 116
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayTwo == true )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& todayOneFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodayTwoE( "Available" ), 
+				setTodayTwoM( "NA" ), 
+				setTodayTwoFlag( true ),
+				setOne(4)
+		}
+end
+
+
+rule "today one is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 115
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayTwo == true )
+	    com.myspace.ecommerce.VendorWorkingDays( one < 4)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& todayOneFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodayTwoE( "Available" ), 
+				setTodayTwoM( "Available" ), 
+				setTodayTwoFlag( true ),
+				setOne(4)
+		}
+		System.out.println("today one false and open or delivery time is before 15 and close time after 15");
+end
+
+
+rule "today one false and close time is before 15pm"
+	dialect "mvel"
+	salience 115
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	    Flagging( flagTodayTwo == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one < 4 )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(2).getDayOfWeek().toString()) )&& todayOneFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	        modify( v ) {
+				setTodayTwoE( "NA" ),
+				setTodayTwoM( "Available" ), 
+				setTodayTwoFlag( true ),
+				setOne(4)
+	        }		
+		System.out.println("today one false and close time is before 15pm");
+end
+
+
+rule "todayTwo is true and open beore 15 and close after 15 "
+	dialect "mvel"
+	salience 114
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayThree == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 4 )
+	then
+		modify( v ) {
+				setTodayThreeM( "Available" ), 
+				setTodayThreeE( "Available" ), 
+				setTodayThreeFlag( true ),
+				setOne(5)
+		}
+end
+
+rule "todayTwo is true and open after 15 and close after 15 "
+	dialect "mvel"
+	salience 114
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayThree == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& one == 4 )
+	then
+		modify( v ) {
+				setTodayThreeM( "NA" ), 
+				setTodayThreeE( "Available" ), 
+				setTodayThreeFlag( true ),
+				setOne(5)
+		}
+end
+
+rule "todayTwo is true and open before 15 and close before 15 "
+	dialect "mvel"
+	salience 114
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayThree == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 4 )
+	then
+		modify( v ) {
+				setTodayThreeM( "Available" ), 
+				setTodayThreeE( "NA" ), 
+				setTodayThreeFlag( true ),
+				setOne(5)
+		}
+		System.out.println("today two true and close time is before 15pm");
+end
+
+
+rule "today two is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 113
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayThree == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one < 5 )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& todayTwoFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodayThreeE( "Available" ), 
+				setTodayThreeM( "NA" ), 
+				setTodayThreeFlag( true ),
+				setOne(5)
+		}
+		System.out.println("monday evenning");
+end
+
+
+rule "today two is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 113
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayThree == true )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& todayTwoFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodayThreeE( "Available" ), 
+				setTodayThreeM( "Available" ), 
+				setTodayThreeFlag( true )
+		}
+end
+
+
+rule "today two false and close time is before 15pm"
+	dialect "mvel"
+	salience 113
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	    Flagging( flagTodayThree == false )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(3).getDayOfWeek().toString()) )&& todayTwoFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	
+				v.setTodayThreeE( "NA" ); 
+				v.setTodayThreeM( "Available" ); 
+				v.setTodayThreeFlag( true );
+                update(v);		
+		System.out.println("today one false and close time is before 15pm");
+end
+
+
+
+
+rule "todayThree is true and open beore 15 and close after 15 "
+	dialect "mvel"
+	salience 112
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFour == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 5 )
+	then
+		modify( v ) {
+				setTodayFourM( "Available" ), 
+				setTodayFourE( "Available" ), 
+				setTodayFourFlag( true ),
+				setOne(6)
+		}
+end
+
+rule "todayThree is true and open after 15 and close after 15 "
+	dialect "mvel"
+	salience 112
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFour == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& one == 5 )
+	then
+		modify( v ) {
+				setTodayFourM( "NA" ), 
+				setTodayFourE( "Available" ), 
+				setTodayFourFlag( true ),
+				setOne(6)
+		}
+end
+
+rule "todayThree is true and open before 15 and close before 15 "
+	dialect "mvel"
+	salience 112
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFour == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 5 )
+	then
+		modify( v ) {
+				setTodayFourM( "Available" ), 
+				setTodayFourE( "NA" ), 
+				setTodayFourFlag( true ),
+				setOne(6)
+		}
+end
+
+
+rule "today three is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 111
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayFour == true )
+	    com.myspace.ecommerce.VendorWorkingDays( one < 6)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& todayThreeFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodayFourE( "Available" ), 
+				setTodayFourM( "NA" ), 
+				setTodayFourFlag( true ),
+				setOne(6)
+		}
+end
+
+
+rule "today three is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 111
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayFour == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one < 6 )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& todayThreeFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodayFourE( "Available" ), 
+				setTodayFourM( "Available" ), 
+				setTodayFourFlag( true ),
+				setOne(6)
+		}
+		System.out.println("today three is false and open or delivery time is before 15 and close time after 15");
+end
+
+
+rule "today three false and close time is before 15pm"
+	dialect "mvel"
+	salience 111
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	    Flagging( flagTodayFour == false )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(4).getDayOfWeek().toString()) )&& todayThreeFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	
+				v.setTodayFourE( "NA" ); 
+				v.setTodayFourM( "Available" ); 
+				v.setTodayFourFlag( true );
+                update(v);		
+		System.out.println("today one false and close time is before 15pm");
+end
+
+
+
+rule "todayFour is true and open beore 15 and close after 15 "
+	dialect "mvel"
+	salience 110
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFive == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 6 )
+	then
+		modify( v ) {
+				setTodayFiveM( "Available" ), 
+				setTodayFiveE( "Available" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+		}
+end
+
+rule "todayFour is true and open after 15 and close after 15 "
+	dialect "mvel"
+	salience 110
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFive == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one == 6 )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& todayFourFlag == true )
+	then
+		modify( v ) {
+				setTodayFiveM( "NA" ), 
+				setTodayFiveE( "Available" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+		}
+		System.out.println("today four is true and close after 15");
+end
+
+rule "todayFour is true and open before 15 and close before 15 "
+	dialect "mvel"
+	salience 110
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodayFive == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 6 )
+	then
+		modify( v ) {
+				setTodayFiveM( "Available" ), 
+				setTodayFiveE( "NA" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+		}
+end
+
+
+rule "today four is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 109
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayFive == true )
+	    com.myspace.ecommerce.VendorWorkingDays(one < 7 )
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& todayFourFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodayFiveE( "Available" ), 
+				setTodayFiveM( "NA" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+		}
+end
+
+
+rule "today four is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 109
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	    Flagging( flagTodayFive == true )
+	    com.myspace.ecommerce.VendorWorkingDays(!todayFiveFlag)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& todayFourFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodayFiveE( "Available" ), 
+				setTodayFiveM( "Available" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+		}
+		System.out.println("today four is false and open or delivery time is before 15 and close time after 15");
+end
+
+
+rule "today four false and close time is before 15pm"
+	dialect "mvel"
+	salience 109
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	    Flagging( flagTodayFive == true )
+	    com.myspace.ecommerce.VendorWorkingDays( one < 7)
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(5).getDayOfWeek().toString()) )&& todayThreeFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	        modify(v){
+				setTodayFiveE( "NA" ), 
+				setTodayFiveM( "Available" ), 
+				setTodayFiveFlag( true ),
+				setOne(7)
+	        }	
+		System.out.println("today four false and close time is before 15pm");
+end
+
+
+
+
+rule "todayFive is true and open beore 15 and close after 15 "
+	dialect "mvel"
+	salience 108
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	    Flagging( flagTodaySix == true )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& one == 7 )
+	then
+		modify( v ) {
+				setTodaySixM( "Available" ), 
+				setTodaySixE( "Available" ), 
+				setTodaySixFlag( true )
+		}
+end
+
+rule "todayFive is true and open after 15 and close after 15 "
+	dialect "mvel"
+	salience 108
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	     Flagging( flagTodaySix == false )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isAfter(java.time.LocalTime.parse("15:00:00")) )&& todayFiveFlag == true )
+	then
+		modify( v ) {
+				setTodaySixM( "NA" ), 
+				setTodaySixE( "Available" ), 
+				setTodaySixFlag( true )
+		}
+end
+
+rule "todayFive is true and open before 15 and close before 15 "
+	dialect "mvel"
+	salience 108
+	no-loop true
+	ruleflow-group "gogo"
+	when
+	     Flagging( flagTodaySix == true )
+	     com.myspace.ecommerce.VendorWorkingDays( one == 7)
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( openTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& todayFiveFlag == true )
+	then
+		modify( v ) {
+				setTodaySixM( "Available" ), 
+				setTodaySixE( "NA" ), 
+				setTodaySixFlag( true )
+		}
+		System.out.println("todayFive is true and open before 15 and close before 15 ");
+end
+
+
+rule "today five is false and open or delivery time is after 15 "
+	dialect "mvel"
+	salience 107
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	     Flagging( flagTodaySix == true )
+	     com.myspace.ecommerce.VendorWorkingDays( todaySixFlag == false)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& todayFiveFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isAfter(LocalTime.parse("15:00:00")) )|| eval( LocalTime.parse("08:59:00").plusHours(product).isAfter(LocalTime.parse("15:00:00")) )))
+	then
+		modify( v ) {
+				setTodaySixE( "Available" ), 
+				setTodaySixM( "NA" ), 
+				setTodaySixFlag( true )
+		}
+		System.out.println("today five is false and open or delivery time is after 15");
+end
+
+
+rule "today five is false and open or delivery time is before 15 and close time after 15 "
+	dialect "mvel"
+	salience 107
+	ruleflow-group "gogo"
+	no-loop true
+	when
+	     Flagging( flagTodaySix == true )
+	     com.myspace.ecommerce.VendorWorkingDays( todaySixFlag == false)
+		v : VendorWorkingDays( eval( vendorWD contains(LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& todayFiveFlag == false && eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(closeTime) )&& ( eval( openTime.isBefore(LocalTime.parse("15:00:00")) )&& eval( LocalTime.parse("08:59:00").plusHours(product).isBefore(LocalTime.parse("15:00:00")) ))&& eval(closeTime.isAfter(LocalTime.parse("15:00:00"))))
+	then
+		modify( v ) {
+				setTodaySixE( "Available" ), 
+				setTodaySixM( "Available" ), 
+				setTodaySixFlag( true )
+		}
+		System.out.println("today five is false and open or delivery time is before 15 and close time after 15m");
+end
+
+
+rule "today five false and close time is before 15pm"
+	dialect "mvel"
+	salience 107
+	ruleflow-group "gogo"
+	no-loop true
+	
+	when
+	     Flagging( flagTodaySix == true )
+	     com.myspace.ecommerce.VendorWorkingDays( todaySixFlag == false )
+		v : VendorWorkingDays( eval( vendorWD contains(java.time.LocalDate.now().plusDays(6).getDayOfWeek().toString()) )&& todayFiveFlag == false && eval( closeTime.isBefore(java.time.LocalTime.parse("15:00:00")) )&& eval( closeTime.isAfter(java.time.LocalTime.parse("09:00:00").plusHours(product)) ))
+	then
+	        modify(v){
+				setTodaySixE( "NA" ), 
+				setTodaySixM( "Available" ), 
+				setTodaySixFlag( true )
+	        }
+                		
+		System.out.println("today five is false and close time is before 15pm");
+end
+
+
+
+
+
+rule "cost calculation"
+dialect "mvel"
+salience -999
+ruleflow-group "gogo"
+no-loop true
+	
+when
+	v:VendorWorkingDays( todayFlag==true)
+	cc:com.myspace.ecommerce.CostCalculation( c:cost==null)
+	com.myspace.ecommerce.VendorWorkingDays( )
+	D:com.myspace.ecommerce.DailyCost( )
+	DG:com.myspace.ecommerce.DeliveryGroup( )
+	
+then
+   
+		
+	        c=(((v.getKm()*v.getKmfactor())+(v.getsWeight()*v.getKgfactor())+v.getFixedcost()));
+	        c= c*D.getDailyCost()*DG.getFixedCost()+DG.getFactor();
+	        c= c+(c*15/100);
+	 modify(cc){
+				setCost(c )
+				
+	        }      
+    System.out.println(D.getDailyCost()+"   "+DG.getFixedCost()+"   "+DG.getFactor()+"   "+v.getKgfactor()+"   "+v.getFixedcost());
+    System.out.println(v.getKmfactor()+"   "+v.getsWeight()+"   "+v.getKgfactor()+"   "+"   "+v.getFixedcost());
+end
+
+
+
+
+rule "cost direct"
+dialect "mvel"
+salience -99
+ruleflow-group "gogo"
+no-loop true
+	
+when
+	v:VendorWorkingDays( direct==true)
+	cc:com.myspace.ecommerce.CostCalculation( c:directCost==null)
+	com.myspace.ecommerce.VendorWorkingDays( )
+	D:com.myspace.ecommerce.DailyCost( )
+	DG:com.myspace.ecommerce.DeliveryGroup( )
+	R:com.myspace.ecommerce.RushHours( )
+	
+then
+   
+	modify(v){
+				
+				setNow("Available")
+				
+	        }
+	        c=(((v.getKm()*v.getKmfactor())+(v.getsWeight()*v.getKgfactor())+v.getFixedcost()));
+	        c= c*R.getCost()*DG.getFixedCost()+DG.getFactor();
+	        c= c+(c*20/100);
+	 modify(cc){
+				setDirectCost(c )
+				
+	        }        
+    
+end
+
+rule "next Day cost"
+dialect "mvel"
+salience -999
+ruleflow-group "gogo"
+no-loop true
+	
+when
+	v:VendorWorkingDays( todayOneFlag==true)
+	cc:com.myspace.ecommerce.CostCalculation( c:nextCost==null)
+	com.myspace.ecommerce.VendorWorkingDays( )
+	D:com.myspace.ecommerce.DailyCost( )
+	DG:com.myspace.ecommerce.DeliveryGroup( )
+	
+then
+   
+	
+	        c=(((v.getKm()*v.getKmfactor())+(v.getsWeight()*v.getKgfactor())+v.getFixedcost()));
+	        c= c*D.getDailyCost()*DG.getFixedCost()+DG.getFactor();
+	        c= c+(c*10/100);
+	 modify(cc){
+				setNextCost(c )
+				
+	        }        
+    
+end
+
+
+
+
+rule "all Day cost"
+dialect "mvel"
+salience -999
+ruleflow-group "gogo"
+no-loop true
+	
+when
+	
+	cc:com.myspace.ecommerce.CostCalculation( c:allCost==null)
+	com.myspace.ecommerce.VendorWorkingDays( )
+	D:com.myspace.ecommerce.DailyCost( )
+	DG:com.myspace.ecommerce.DeliveryGroup( )
+	v:com.myspace.ecommerce.VendorWorkingDays( )
+then
+   
+	
+	        c=(((v.getKm()*v.getKmfactor())+(v.getsWeight()*v.getKgfactor())+v.getFixedcost()));
+	        c= c*D.getDailyCost()*DG.getFixedCost()+DG.getFactor();
+	        c= c+(c*5/100);
+	 modify(cc){
+				setAllCost(c )
+				
+	        }        
+    
+end

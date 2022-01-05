@@ -1,0 +1,21 @@
+package com.myspace.ecommerce;
+
+import java.lang.Number;
+
+rule "next day cost"
+	dialect "mvel"
+	salience -700
+	ruleflow-group "gogo"
+	when
+		VendorWorkingDays( km : km >= 0.0 , sw : sWeight >= 0.0 , todayOneFlag == true )
+		d : DailyCost( dcost : dailyCost >= 0.0 )
+		c : CostCalculation( cost : cost == null )
+		ServiceLeadTime( kmf : kmFactor >= 0.0 , kgf : kgFactor >= 0.0 , fcost : fixedCost >= 0 )
+		DeliveryGroup( dgfixedcost : fixedCost >= 0.0 , f : factor >= 0.0 )
+	then
+		cost = ((((km*kmf)+(sw*kgf)+fcost)*dcost)*f)+dgfixedcost;
+		cost = (cost*10)/100;
+		modify( c ) {
+				setNextCost( cost )
+		}
+end
